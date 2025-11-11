@@ -1,0 +1,25 @@
+/* .spin::before {
+  content: "";
+  position: absolute;
+  inset: -150%;
+  animation: speen 8s cubic-bezier(0.56, 0.15, 0.28, 0.86) infinite,
+             woah 4s infinite;
+  animation-play-state: paused;
+  z-index: -1;
+}
+
+.real-button:hover ~ div .spin::before,
+button:hover ~ .spin::before {
+  animation-play-state: running;
+}
+
+@keyframes speen {
+  0% { rotate: 10deg; }
+  50% { rotate: 190deg; }
+  100% { rotate: 370deg; }
+}
+
+@keyframes woah {
+  0%, 100% { scale: 1; }
+  50% { scale: 0.75; }
+} */

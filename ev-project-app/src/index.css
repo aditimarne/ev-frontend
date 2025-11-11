@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-[#EDF0EF]; 
+ /* Custom background color using Tailwind */
+ font-family: "General Sans", sans-serif;
+}
+
+@layer base{
+  @font-face {
+    font-family: "general";
+    src: url("/fonts/general.woff2") format("woff2");
+  }
+    @font-face {
+      font-family: "circular-web";
+      src: url("/fonts/circularweb-book.woff2") format("woff2");
+    }
+  
+    @font-face {
+      font-family: "robert-medium";
+      src: url("/fonts/robert-medium.woff2") format("woff2");
+    }
+  
+    @font-face {
+      font-family: "robert-regular";
+      src: url("/fonts/robert-regular.woff2") format("woff2");
+    }
+  
+    @font-face {
+      font-family: "zentry";
+      src: url("/fonts/zentry-regular.woff2") format("woff2");
+    }
+  }
+
+
+@layer utilities
+{
+
+.nav-hover-btn {
+  @apply relative ms-10 text-white cursor-pointer;
+}
+
+.nav-hover-btn::after {
+  content: '';
+  @apply absolute -bottom-0.5 left-0 h-[2px] w-full origin-bottom-right scale-x-0 bg-neutral-800 transition-transform duration-300 ease-[cubic-bezier(0.65_0.05_0.36_1)] dark:bg-white;
+}
+
+.nav-hover-btn:hover::after {
+  @apply origin-bottom-left scale-x-100;
+}
+
+
+}
+
+
+
+
+
+.path { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: dash 3s linear forwards; animation-iteration-count: 1;animation-delay: 1s;}
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.dashed{
+  stroke-dasharray: 5,12;
+  
+}
+#arrow{animation: arrow 2s linear forwards; opacity:0;}
+@keyframes arrow {
+  to {
+    opacity: 1;
+  }
+}
+.ifrm{border:none; width:100%;margin-top:50px;}
+
+@keyframes rotate {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+}
+
