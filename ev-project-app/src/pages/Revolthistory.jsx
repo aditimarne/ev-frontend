@@ -24,17 +24,24 @@ const Revolthistory = () => {
 
   return (
     <div className="px-4 py-6 max-w-screen-xl mx-auto pt-40">
-      <h2 className="text-2xl md:text-4xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-300 animate-pulse mb-20">
+      
+      <div className="relative ">
+        <h2 className="abs text-2xl md:text-4xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-300 animate-pulse mb-20">
         Revolt Battery Health History
-      </h2>
-      <div className="flex justify-end mb-4">
+        </h2>
+        </div>
   <button
     onClick={() => setShowIdealRanges(true)}
-    className="px-4 py-2 bg-cyan-600 text-white font-semibold rounded-md hover:bg-indigo-600 transition"
+    className="absolute top-52 right-3
+      px-2 py-1 text-xs
+      sm:px-3 sm:py-1.5 sm:text-sm
+      md:px-4 md:py-2 md:text-base
+      bg-cyan-600 text-white font-semibold rounded-md
+      hover:bg-indigo-600 transition"
   >
     View Ideal Ranges
   </button>
-</div>
+
 
       {history.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

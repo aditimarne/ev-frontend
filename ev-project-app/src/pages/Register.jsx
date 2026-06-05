@@ -1,8 +1,7 @@
-import axios from "axios";
 import { useState } from "react";
+import { FaBatteryHalf, FaEnvelope, FaLock, FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { FaUser, FaEnvelope, FaLock, FaBatteryHalf } from "react-icons/fa";
-import API from "../api/api";
+import API from "../api/auth";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -35,7 +34,7 @@ export default function Register() {
 
     try {
 
-      const response = await API.post("/register/",  formData);
+      const response = await API.post("/register/", formData);
 
       if (response.status === 201) {
         navigate("/home");
@@ -53,7 +52,7 @@ export default function Register() {
   };
 
   return (
-    
+
     <div className="h-screen flex items-center justify-center  px-4 py-8 overflow-hidden">
       <div className="backdrop-blur-md bg-[#262f3d80] text-white rounded-xl shadow-2xl w-full max-w-md p-8 space-y-6 border border-gray-700">
         <div className="text-center">

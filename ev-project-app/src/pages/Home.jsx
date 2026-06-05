@@ -5,13 +5,14 @@ import { FaBatteryFull, FaChartLine, FaRocket } from 'react-icons/fa';
 const Home = () => {
   return (
 
-<div className="w-screen h-screen bg-gradient-to-br from-[#141e30] to-[#243b55] flex flex-col items-center justify-between text-white font-sans pt-36 pb-10 relative overflow-hidden ">
+<div className="w-screen  min-h-screen bg-gradient-to-br from-[#141e30] to-[#243b55] flex flex-col items-center justify-between text-white font-sans pt-36 pb-10 relative overflow-hidden overflow-x-hidden 
+   ">
 
      <div className="text-center px-6 z-10 ">
-    <h1 className=" text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-300 mb-4 animate-pulse">
+    <h1 className=" lg:text-6xl  md:text-4xl text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-300 mb-4 animate-pulse">
           Smart EV Battery Health Prediction
         </h1>
-    <p className="text-md md:text-lg text-gray-300 max-w-xl mx-auto">
+    <p className="text-md md:text-lg text-sm  text-gray-300 max-w-xl mx-auto">
       Predict. Prevent. Power Your Ride. Real-time insights into your electric vehicle's battery health using Digital Twin.
     </p>
     {/* <button className="relative px-6 py-2 bg-gradient-to-r from-cyan-400 to-teal-500 text-white font-bold rounded-lg shadow-lg overflow-hidden">
@@ -29,7 +30,7 @@ const Home = () => {
   
 
   {/* Cards Section */}
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 max-w-6xl z-10">
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 max-w-6xl z-10 md:mt-10 mt-10 lg:mb-8">
     {/* Card 1 */}
     <div className="bg-[#1e2a3a] p-6 rounded-2xl shadow-lg border border-cyan-500 hover:scale-105 transition">
       <FaBatteryFull className="text-4xl text-cyan-300 mb-4" />

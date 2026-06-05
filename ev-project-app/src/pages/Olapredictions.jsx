@@ -1,8 +1,7 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import axios from "axios";
 import { gsap } from "gsap";
-import React, { useEffect, useState } from "react";
-import API from "../api/api";
+import { useEffect, useState } from "react";
+import MLAPI from "../api/ml";
 
 const Olapredictions = () => {
   useEffect(() => {
@@ -54,7 +53,7 @@ const Olapredictions = () => {
         return;
       }
   
-const response = await API.post("/ola/predict/", inputs);
+const response = await MLAPI.post("/ola/predict", inputs);
 
 
       if (!response.data || !response.data.soh || !response.data.rul) {
@@ -104,10 +103,8 @@ localStorage.setItem("olaBatteryHistory", JSON.stringify(existingHistory));
     } catch (error) {
       console.error("Error fetching battery health:", error);
     }
-    
+
   };
-
-
 
   const handleShowSuggestions = async () => {
     try {
@@ -123,17 +120,17 @@ localStorage.setItem("olaBatteryHistory", JSON.stringify(existingHistory));
         "Sport_mode_distance",
         "Hyper_mode_distance"
       ];
-  
+
       // ✅ Filter only required keys
       const filteredInputs = {};
       recommendationKeys.forEach((key) => {
         filteredInputs[key] = inputs[key];
       });
-  
+
       console.log("🚀 Sending filtered inputs to backend:", filteredInputs);
 
 
-const response = await API.post("ola/recommendations/", inputs);
+const response = await MLAPI.post("/ola/recommendations", inputs);
 
       if (!response.data || !response.data.suggestions) {
         throw new Error("Invalid API response");
@@ -148,8 +145,6 @@ const response = await API.post("ola/recommendations/", inputs);
       console.error("Error fetching suggestions:", error);
     }
   };
-
-
 
   useEffect(() => {
     if (percentage > 0 || remainingLife > 0) {
@@ -168,103 +163,211 @@ const response = await API.post("ola/recommendations/", inputs);
     }
   }, [percentage, remainingLife]);
 
-  return (
-    <div className="flex p-4 justify-center pt-44">
-      <div className="grid grid-cols-3 gap-[32px] p-5 mr-20">
-        {Object.keys(inputs).map((key) => (
-          <div key={key} className="relative p-[9px]">
-            <input
-  name={key}
-  value={inputs[key]}
-  onChange={handleChange}
-  className={`peer w-40 p-2 text-sm border-b-2 bg-transparent outline-none text-white focus:ring-0 transition-all 
-    ${invalidFields[key] ? 'border-red-500 focus:border-red-500' : 'border-gray-400 focus:border-blue-500'}`}
-/>
+   return (
+    <div
+      className="
+        max-w-7xl
+        mx-auto
+        px-4
+        pt-28
+        sm:pt-48
+        lg:pt-56
+      "
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-14">
 
-            <label
-              htmlFor={key}
-              className="absolute left-0 top-[-9px] text-sm text-white transition-all peer-focus:text-xs peer-focus:text-blue-500"
-            >
-              {key.replace(/_/g, " ")}
-            </label>
-          </div>
-        ))}
-        <div className="col-span-full flex justify-center mb-10">
-          <button
-            onClick={calculateBatteryHealth}
-            className="px-9 py-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
-          >
-            Calculate Battery Health
-          </button>
-        </div>
-      </div>
-      <div className="SOH">
-        <div className="flex flex-col w-1/2 h-max">
-          <div className="relative w-39 h-36 mb-8 pt-20">
-            <svg width="200" height="250" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="47" fill="none" stroke="#e0e0e0" strokeWidth="6" />
-              <circle
-                id="progress"
-                cx="50" cy="50"
-                r="47"
-                fill="none"
-                stroke={percentage > 50 ? "#4CAF50" : "#FFC107"}
-                strokeWidth="6"
-                strokeLinecap="round"
-                strokeDasharray={circumference}
-                strokeDashoffset={circumference - (circumference * percentage) / 100}
-                transform="rotate(-90 50 50)"
-              />
-            </svg>
-            <div className="absolute top-48 left-20 w-full h-full flex text-2xl text-white font-bold">{percentage}%</div>
-          </div>
-          <div className="relative w-39 h-36 ml-80 bottom-24">
-            <svg width="200" height="250" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="47" fill="none" stroke="#e0e0e0" strokeWidth="6" />
-              <circle
-                id="progress-life"
-                cx="50" cy="50"
-                r="47"
-                fill="none"
-                stroke={remainingLife > 5 ? "#4CAF50" : "#FF5733"}
-                strokeWidth="6"
-                strokeLinecap="round"
-                strokeDasharray={circumference}
-                strokeDashoffset={circumference - (circumference * remainingLife) / 10}
-                transform="rotate(-90 50 50)"
-              />
-            </svg>
-            <div className="absolute top-28 left-20 w-full h-full flex text-2xl text-white font-bold">{remainingLife.toFixed(1)}M</div>
-          </div>
-        </div>
-        <button onClick={handleShowSuggestions} className="ml-36 mt-12 px-1 py-1 h-14 w-64 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600">Look Suggestions</button>
-
-    {showSuggestions && (
-  <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div className="bg-gradient-to-br from-white via-gray-50 to-blue-100 p-6 rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-y-auto animate-fadeIn">
-      <h2 className="text-2xl font-extrabold mb-6 text-center text-blue-700">🔋 {recommendations.title}</h2>
-      {recommendations.suggestions.map((suggestion, index) => (
+        {/* ===== INPUTS ===== */}
         <div
-          key={index}
-          className="mb-4 p-4 rounded-lg bg-white shadow-md border-l-4 border-blue-400"
+          className="
+            grid
+            grid-cols-2
+            sm:grid-cols-2
+            md:grid-cols-4
+            lg:grid-cols-4
+            sm:gap-x-8
+            lg:gap-x-5
+            lg:gap-y-16
+            gap-y-8
+            lg:gap-10
+          "
         >
-          <p className="text-gray-800 text-sm font-medium">💡 {suggestion}</p>
+          {Object.keys(inputs).map((key) => (
+            <div key={key} className="relative ">
+              <input
+                name={key}
+                value={inputs[key]}
+                onChange={handleChange}
+                className={`peer
+                  w-full
+                  max-w-[150px]
+                  sm:max-w-[100px]
+                  lg:max-w-[160px]
+                  p-1.5
+                  text-xs
+                  sm:text-sm
+                  bg-transparent
+                  border-b-2
+                  outline-none
+                  text-white
+                  ${invalidFields[key]
+                    ? "border-red-500"
+                    : "border-gray-400 focus:border-blue-500"}
+                `}
+              />
+              <label className="absolute -top-3 left-0 text-[11px] sm:text-sm text-white transition-all
+      pointer-events-none
+
+      peer-placeholder-shown:top-2
+      peer-placeholder-shown:text-sm
+      peer-placeholder-shown:text-gray-400
+
+      peer-focus:-top-3
+      peer-focus:text-xs
+      peer-focus:text-blue-400">
+                {key.replace(/_/g, " ")}
+              </label>
+            </div>
+          ))}
+
+          <div className="col-span-2 md:col-span-4 flex justify-center">
+            <button
+              onClick={calculateBatteryHealth}
+              className="
+                h-10
+                sm:h-12
+                lg:h-14
+                w-44
+                sm:w-56
+                lg:w-64
+                bg-blue-500
+                text-sm
+                sm:text-base
+                text-white
+                font-semibold
+                rounded-md
+                hover:bg-blue-600
+              "
+            >
+              Calculate Battery Health
+            </button>
+          </div>
         </div>
-      ))}
-      <div className="flex justify-center mt-6">
-        <button
-          onClick={() => setShowSuggestions(false)}
-          className="px-6 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-lg shadow hover:from-red-600 hover:to-red-700 transition"
-        >
-          Close
-        </button>
-      </div>
-    </div>
-  </div>
-)}
 
+        {/* ===== CIRCLES + BUTTON ===== */}
+        <div className="flex flex-col items-center">
+
+          <div
+            className="
+              grid
+              grid-cols-2
+              gap-16
+              sm:gap-14
+              lg:gap-16
+              md:ml-24
+              w-fit
+              mr-24
+              lg:mr-10
+              mx-auto
+            "
+          >
+            {/* SOH */}
+            <div className="relative w-28 h-28 sm:w-40 sm:h-40 lg:w-52 lg:h-52">
+              <svg viewBox="0 0 100 100" className="w-full h-full rotate-[-90deg]">
+                <circle cx="50" cy="50" r="45" stroke="#1f2937" strokeWidth="8" fill="none" />
+                <circle
+                  id="progress"
+                  cx="50"
+                  cy="50"
+                  r="45"
+                  stroke="#22c55e"
+                  strokeWidth="8"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={circumference}
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                <p className="text-lg sm:text-2xl lg:text-3xl font-bold">{percentage}%</p>
+                <p className="text-[9px] sm:text-xs lg:text-sm">SOH</p>
+              </div>
+            </div>
+
+            {/* RUL */}
+            <div className="relative w-28 h-28 sm:w-40 sm:h-40 lg:w-52 lg:h-52">
+              <svg viewBox="0 0 100 100" className="w-full h-full rotate-[-90deg]">
+                <circle cx="50" cy="50" r="45" stroke="#1f2937" strokeWidth="8" fill="none" />
+                <circle
+                  id="progress-life"
+                  cx="50"
+                  cy="50"
+                  r="45"
+                  stroke="#f97316"
+                  strokeWidth="8"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={circumference}
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                <p className="text-lg sm:text-2xl lg:text-3xl font-bold">
+                  {remainingLife.toFixed(1)}M
+                </p>
+                <p className="text-[9px] sm:text-xs lg:text-sm">RUL</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-center w-full mt-10 lg:mt-20">
+            <button
+              onClick={handleShowSuggestions}
+              className="
+                h-10
+                sm:h-14
+                lg:h-14
+                lg:ml-20
+                w-44
+                sm:w-56
+                lg:w-64
+                bg-green-500
+                text-sm
+                sm:text-base
+                text-white
+                font-semibold
+                rounded-md
+                hover:bg-green-600
+              "
+            >
+              Look Suggestions
+            </button>
+          </div>
+        </div>
       </div>
 
+      {/* MODAL unchanged */}
+      {showSuggestions && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-white via-gray-50 to-blue-100 p-6 rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-y-auto">
+            <h2 className="text-2xl font-extrabold mb-6 text-center text-blue-700">
+              🔋 {recommendations.title}
+            </h2>
+            {recommendations.suggestions.map((s, i) => (
+              <div key={i} className="mb-4 p-4 rounded-lg bg-white shadow-md border-l-4 border-blue-400">
+                <p className="text-gray-800 text-sm font-medium">💡 {s}</p>
+              </div>
+            ))}
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={() => setShowSuggestions(false)}
+                className="px-6 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-lg"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

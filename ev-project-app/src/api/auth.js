@@ -1,24 +1,23 @@
 import axios from "axios";
 
 const API = axios.create({
-   baseURL: import.meta.env.VITE_BACKEND_URL + "/api", 
+  baseURL: import.meta.env.VITE_AUTH_API,
   headers: {
     "Content-Type": "application/json",
   },
   withCredentials: true,
 });
 
-
+// keep 401 redirect ONLY for auth
 API.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401) {
       localStorage.removeItem("token");
       window.location.href = "/login";
     }
-    return Promise.reject(error);
+    return Promise.reject(err);
   }
 );
-
 
 export default API;

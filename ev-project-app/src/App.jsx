@@ -15,10 +15,10 @@ import Login from "./pages/Login";
 import Olahistory from "./pages/Olahistory";
 import Olapredictions from "./pages/Olapredictions";
 import Predictions from "./pages/Predictions";
+import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import Revolthistory from "./pages/Revolthistory";
 import Revoltpredictions from "./pages/Revoltpredictions";
-import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 
 // Dynamic history component

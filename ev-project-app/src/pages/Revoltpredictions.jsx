@@ -1,9 +1,7 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import axios from "axios";
 import { gsap } from "gsap";
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import API from "../api/api";
+import { useEffect, useState } from "react";
+import MLAPI from "../api/ml";
 
 const Revoltpredictions = () => {
   useEffect(() => {
@@ -25,213 +23,214 @@ const Revoltpredictions = () => {
 
   const [percentage, setPercentage] = useState(0);
   const [remainingLife, setRemainingLife] = useState(0);
-  const [recommendations, setRecommendations] = useState({ title: '', suggestions: [] });
+  const [recommendations, setRecommendations] = useState({ title: "", suggestions: [] });
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const circumference = 2 * Math.PI * 47;
+  const circumference = 2 * Math.PI * 45;
   const [invalidFields, setInvalidFields] = useState({});
 
-
   const handleChange = (e) => {
-  const { name, value } = e.target;
-
-  const isInvalid = value.trim() !== "" && isNaN(Number(value));
-
-  setInvalidFields({ ...invalidFields, [name]: isInvalid });
-  setInputs({ ...inputs, [name]: value });
-};
-
+    const { name, value } = e.target;
+    setInvalidFields({ ...invalidFields, [name]: value !== "" && isNaN(value) });
+    setInputs({ ...inputs, [name]: value });
+  };
 
   const calculateBatteryHealth = async () => {
-    try {
-      const emptyFields = Object.entries(inputs).filter(([_, value]) => value === "");
-      if (emptyFields.length > 0) {
-        alert("Please fill all fields before calculating battery health.");
-        return;
-      }
-
-  const response = await API.post("/revolt/predict/", inputs);
-
-
-      if (!response.data || !response.data.soh || !response.data.rul) {
-        throw new Error("Invalid API response");
-      }
-      setPercentage(response.data.soh);
-      setRemainingLife(response.data.rul);
-
-      setTimeout(() => {
-        gsap.to("#progress", {
-          strokeDashoffset: circumference - (circumference * response.data.soh) / 100,
-          duration: 1.5,
-          ease: "power2.out",
-        });
-        gsap.to("#progress-life", {
-          strokeDashoffset: circumference - (circumference * response.data.rul) / 10,
-          duration: 1.5,
-          ease: "power2.out",
-        });
-      }, 100);
-
-      const newEntry = {
-        inputs,
-        percentage: response.data.soh,
-        remainingLife: response.data.rul,
-        timestamp: new Date().toLocaleString(),
-      };
-
-      const existingHistory = JSON.parse(localStorage.getItem("revoltBatteryHistory")) || [];
-      existingHistory.push(newEntry);
-      localStorage.setItem("revoltBatteryHistory", JSON.stringify(existingHistory));
-    } catch (error) {
-      console.error("Error fetching battery health:", error);
+    const empty = Object.values(inputs).some(v => v === "");
+    if (empty) {
+      alert("Please fill all fields");
+      return;
     }
-  };
 
-  const handleShowSuggestions = async () => {
-    try {
-      const keys = [
-        "Distance_Travelled", "RideTime", "Average_Speed", "Max_Speed",
-        "Eco_Mode", "Normal_Mode", "Sport_Mode", "SOC_Consumed"
-      ];
-      const filteredInputs = {};
-      keys.forEach(key => filteredInputs[key] = inputs[key]);
+    const res = await MLAPI.post("/revolt/predict", inputs);
+    setPercentage(res.data.soh);
+    setRemainingLife(res.data.rul);
 
-
-  const response = await API.post("/revolt/recommendations/", inputs);
-
-      if (!response.data || !response.data.suggestions) {
-        throw new Error("Invalid API response");
-      }
-
-      setRecommendations({
-        title: response.data.title,
-        suggestions: response.data.suggestions,
-      });
-      setShowSuggestions(true);
-    } catch (error) {
-      console.error("Error fetching suggestions:", error);
-    }
-  };
-
-  useEffect(() => {
     gsap.to("#progress", {
-      strokeDashoffset: circumference - (circumference * percentage) / 100,
-      duration: 1.5,
-      ease: "power2.out",
+      strokeDashoffset: circumference - (circumference * res.data.soh) / 100,
+      duration: 1.2,
     });
     gsap.to("#progress-life", {
-      strokeDashoffset: circumference - (circumference * remainingLife) / 10,
-      duration: 1.5,
-      ease: "power2.out",
+      strokeDashoffset: circumference - (circumference * res.data.rul) / 10,
+      duration: 1.2,
     });
-  }, [percentage, remainingLife]);
+  };
 
   return (
-    <div className="flex p-5 justify-center pt-52 ">
-      <div className="grid grid-cols-4 gap-7 p-7 mr-20">
-        {Object.keys(inputs).map((key) => (
-          <div key={key} className="relative p-[8px]">
-            <input
-              name={key}
-      value={inputs[key]}
-      onChange={handleChange}
-      className={`peer w-36 p-2 text-sm border-b-2 bg-transparent outline-none text-white focus:ring-0 transition-all 
-        ${invalidFields[key] ? 'border-red-500 focus:border-red-500' : 'border-gray-400 focus:border-blue-500'}`}
-      placeholder=" "
-            />
-            <label
-              htmlFor={key}
-              className="absolute left-0 top-[-9px] text-sm text-white transition-all peer-focus:text-xs peer-focus:text-blue-500"
-            >
-              {key.replace(/_/g, " ")}
-            </label>
+<div className="
+  max-w-7xl
+  mx-auto
+  px-4
+  pt-28        /* 📱 mobile: push below navbar */
+  sm:pt-48     /* 📲 tablet */
+  lg:pt-60     /* 💻 desktop unchanged */
+">
+
+      {/* ===== MAIN GRID ===== */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-14">
+
+        {/* ===== INPUTS ===== */}
+        <div className="
+          grid
+          grid-cols-2              /* 📱 mobile: 2×2 */
+          sm:grid-cols-2
+          md:grid-cols-4
+          lg:grid-cols-4            /* 💻 desktop unchanged */
+          sm:gap-x-8 gap-y-8
+          lg:gap-y-16
+          lg:gap-10
+        ">
+          {Object.keys(inputs).map((key) => (
+            <div key={key} className="relative">
+              <input
+                name={key}
+                value={inputs[key]}
+                onChange={handleChange}
+                className={`peer
+                  w-full
+                  max-w-[150px]        /* 📱 compact */
+                  sm:max-w-[100px]
+                  lg:max-w-[160px]
+                  p-1.5
+                  text-xs
+                  sm:text-sm
+                  bg-transparent
+                  border-b-2
+                  outline-none
+                  text-white
+                  ${invalidFields[key]
+                    ? "border-red-500"
+                    : "border-gray-400 focus:border-blue-500"}
+                `}
+              />
+              <label className="absolute -top-3 left-0 text-[11px] sm:text-sm text-white transition-all
+      pointer-events-none
+
+      peer-placeholder-shown:top-2
+      peer-placeholder-shown:text-sm
+      peer-placeholder-shown:text-gray-400
+
+      peer-focus:-top-3
+      peer-focus:text-xs
+      peer-focus:text-blue-400">
+                {key.replace(/_/g, " ")}
+              </label>
+            </div>
+          ))}
+
+          <div className="col-span-2 md:col-span-4 flex justify-center ">
+            <button
+              onClick={calculateBatteryHealth}
+className="
+  h-10
+  text-white            /* 📱 smaller */
+  sm:h-12
+  md:mt-0
+  md:ml-20
+  lg:ml-32
+  lg:h-14
+  w-44              /* 📱 narrower */
+  sm:w-56
+  md:w-60
+  lg:w-64
+  bg-blue-500
+  text-sm           /* 📱 smaller text */
+  sm:text-base
+  font-semibold
+  rounded-md
+  hover:bg-blue-600
+"            >
+              Calculate Battery Health
+            </button>
           </div>
-        ))}
-        <div className="col-span-full flex justify-center  ">
-          <button
-            onClick={calculateBatteryHealth}
-            className="ml-36 mb-0 px-1 py-1 h-14 w-64 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
-          >
-            Calculate Battery Health
-          </button>
         </div>
-      </div>
 
-        <div className="SOH">
-      <div className="flex flex-col pl-20pb-10">
-        <div className=" relative w-39 h-36 mb-8 pt-4">
-          <svg width="200" height="250" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="47" fill="none" stroke="#e0e0e0" strokeWidth="6" />
-            <circle
-              id="progress"
-              cx="50" cy="50"
-              r="47"
-              fill="none"
-              stroke={percentage > 50 ? "#4CAF50" : "#FFC107"}
-              strokeWidth="6"
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              strokeDashoffset={circumference - (circumference * percentage) / 100}
-              transform="rotate(-90 50 50)"
-            />
-          </svg>
-                      <div className="absolute top-32 left-20 w-full h-full flex text-2xl text-white font-bold">{percentage}%</div>
+        {/* ===== CIRCLES + BUTTON ===== */}
+        <div className="flex flex-col items-center">
 
-          </div>
-           <div className="relative w-39 h-36 ml-80 bottom-40">
-          <svg width="200" height="250" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="47" fill="none" stroke="#e0e0e0" strokeWidth="6" />
-            <circle
-              id="progress-life"
-              cx="50" cy="50"
-              r="47"
-              fill="none"
-              stroke={remainingLife > 5 ? "#4CAF50" : "#FF5733"}
-              strokeWidth="6"
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              strokeDashoffset={circumference - (circumference * remainingLife) / 10}
-              transform="rotate(-90 50 50)"
-            />
-          </svg>
-                      <div className="absolute top-28 left-20 w-full h-full flex text-2xl text-white font-bold">{remainingLife.toFixed(1)}M</div>
+          {/* 🔵🔵 CIRCLES GRID */}
+ <div
+  className="
+    grid
+    grid-cols-2
+    gap-16          /* 📱 very small gap */
+    sm:gap-16       /* 📲 tablet */
+    lg:gap-20 
+    md:mr-14     /* 💻 desktop unchanged */
+    ml-28
+    w-fit          /* 🔥 removes extra horizontal space */
+    mx-auto
+  "
+>
 
-          </div>
-        
-        {/* <div className="text-center">
-          <p className="text-xl font-bold ">State of health</p>
-          <p className="text-xl font-bold">Remaining life span</p>
-        </div> */}
-        <button
-          onClick={handleShowSuggestions}
-          className="ml-36 mb-11 px-1 py-1 h-14 w-64 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600"
-        >
-          Look Suggestions
-        </button>
-      </div>
-
-      {showSuggestions && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-white via-gray-50 to-blue-100 p-6 rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-y-auto animate-fadeIn">
-            <h2 className="text-2xl font-extrabold mb-6 text-center text-blue-700">🔋 {recommendations.title}</h2>
-            {recommendations.suggestions.map((suggestion, index) => (
-              <div
-                key={index}
-                className="mb-4 p-4 rounded-lg bg-white shadow-md border-l-4 border-blue-400"
-              >
-                <p className="text-gray-800 text-sm font-medium">💡 {suggestion}</p>
+            {/* SOH */}
+            <div className="relative w-28 h-28 sm:w-40 sm:h-40 lg:w-52 lg:h-52">
+              <svg viewBox="0 0 100 100" className="w-full h-full rotate-[-90deg]">
+                <circle cx="50" cy="50" r="45" stroke="#1f2937" strokeWidth="8" fill="none" />
+                <circle
+                  id="progress"
+                  cx="50" cy="50" r="45"
+                  stroke="#22c55e"
+                  strokeWidth="8"
+                  fill="none"
+                  strokeLinecap="round"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={circumference}
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                <p className="text-lg sm:text-2xl lg:text-3xl font-bold">{percentage}%</p>
+                <p className="text-[9px] sm:text-xs lg:text-sm ">SOH</p>
               </div>
-            ))}
-            <div className="flex justify-center mt-6">
-              <button
-                onClick={() => setShowSuggestions(false)}
-                className="px-6 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-lg shadow hover:from-red-600 hover:to-red-700 transition"
-              >
-                Close
-              </button>
+            </div>
+
+            {/* RUL */}
+            <div className="relative w-28 h-28 sm:w-40 sm:h-40 lg:w-52 lg:h-52">
+              <svg viewBox="0 0 100 100" className="w-full h-full rotate-[-90deg]">
+                <circle cx="50" cy="50" r="45" stroke="#1f2937" strokeWidth="8" fill="none" />
+                <circle
+                  id="progress-life"
+                  cx="50" cy="50" r="45"
+                  stroke="#f97316"
+                  strokeWidth="8"
+                  fill="none"
+                  strokeLinecap="round"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={circumference}
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                <p className="text-lg sm:text-2xl lg:text-3xl font-bold">{remainingLife.toFixed(1)}M</p>
+                <p className="text-[9px] sm:text-xs lg:text-sm">RUL</p>
+              </div>
             </div>
           </div>
+
+          {/* BUTTON */}
+          <div className="flex justify-center w-full mt-10 lg:mt-20">
+  <button
+    className="
+      h-10
+      sm:h-14
+      lg:h-14
+      lg:ml-20
+      md:ml-16
+      w-44
+      sm:w-56
+      lg:w-64
+      bg-green-500
+      text-sm
+      sm:text-base
+      text-white
+      font-semibold
+      rounded-md
+      hover:bg-green-600
+    "
+  >
+    Look Suggestions
+  </button>
+</div>
+
         </div>
-      )}
       </div>
     </div>
   );

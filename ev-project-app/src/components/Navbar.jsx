@@ -53,52 +53,82 @@ const Navbar = () => {
 
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex space-x-40 mt-10 ml-6 text-white">
-          {navItems.map((item) => {
-            const isActive = location.pathname === `/${item.toLowerCase()}`;
-            return (
-              <div key={item} className="relative">
-                {item === 'Predictions' ? (
-                  <button
-                    onClick={() => setShowPopup(!showPopup)}
-                    className={`nav-hover-btn ${isActive ? "font-extrabold text-white" : "text-white"}`}
-                  >
-                    {item}
-                  </button>
-                ) : (
-                  <Link
-                    to={`/${item.toLowerCase()}`}
-                    className={`nav-hover-btn ${isActive ? "font-extrabold text-white" : "text-white"}`}
-                  >
-                    {item}
-                  </Link>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <div className="flex
+    flex-nowrap           /* 🔥 NEVER WRAP */
+    items-center
+    justify-center
+    gap-3                 /* 📱 very tight spacing */
+    sm:gap-4
+    md:gap-8
+    lg:gap-16
+    xl:gap-32
+    mt-6
+    md:mt-10
+    text-white
+    text-[13px]           /* 📱 shrink text */
+    sm:text-sm
+    md:text-base
+    whitespace-nowrap
+    w-full
+    ">
+           {navItems.map((item) => {
+    const isActive = location.pathname === `/${item.toLowerCase()}`;
+    return (
+      <div key={item}>
+        {item === "Predictions" ? (
+          <button
+            onClick={() => setShowPopup(!showPopup)}
+            className={`nav-hover-btn ${
+              isActive ? "font-extrabold" : ""
+            }`}
+          >
+            {item}
+          </button>
+        ) : (
+          <Link
+            to={`/${item.toLowerCase()}`}
+            className={`nav-hover-btn ${
+              isActive ? "font-extrabold" : ""
+            }`}
+          >
+            {item}
+          </Link>
+        )}
+      </div>
+    );
+  })}
+
 
         {/* ✅ Settings Icon */}
           {isLoggedIn && (
-            <FiSettings
-              className="text-white hover:text-cyan-400 cursor-pointer text-2xl mt-10 mr-4"
-              onClick={() => navigate("/settings")}
-              title="Settings"
-            />
+           <FiSettings
+  className="
+    text-white
+    hover:text-cyan-400
+    cursor-pointer
+    text-lg
+    md:text-xl
+    lg:text-2xl
+    flex-shrink-0
+  "
+  onClick={() => navigate("/settings")}
+  title="Settings"
+/>
+
           )}
         </div>
-
+ </div>
 
         {/* Mobile Hamburger */}
-        <div className="md:hidden text-white text-2xl">
+        {/* <div className="md:hidden text-white text-2xl">
           <button onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? <FaTimes /> : <FaBars />}
           </button>
-        </div>
+        </div> */}
 
 
       {/* Mobile Menu */}
-      {menuOpen && (
+      {/* {menuOpen && (
         <div className="md:hidden bg-[#0f172a00] px-20 pb-4 text-white flex flex-row justify-center items-center space-x-6 gap-9" >
           {navItems.map((item) =>
             item === 'Predictions' ? (
@@ -124,7 +154,7 @@ const Navbar = () => {
             )
           )}
         </div>
-      )}
+      )} */}
 
 
 

@@ -25,25 +25,37 @@ const Olahistory = () => {
   };
 
   return (
-    <div className="flex-col px-4 py-6 max-w-screen-xl mx-auto pt-40">
+<div className="h-screen pt-28 px-6 flex flex-col bg-gradient-to-br from-[#141e30] to-[#243b55] text-white overflow-hidden">
+<div className="relative flex items-center justify-center mt-6 flex-shrink-0">
 
-      <h2 className="text-2xl md:text-4xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-300  animate-pulse mb-20">
-        Ola Battery Health History
-      </h2>
-      <div className="flex justify-end mb-4">
+
+  <h2 className="text-xl sm:text-2xl md:text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-300 animate-pulse mb-20">
+    Ola Battery Health History
+  </h2>
+
   <button
     onClick={() => setShowIdealRanges(true)}
-    className="px-4 py-2 bg-cyan-600 text-white font-semibold rounded-md hover:bg-indigo-600 transition"
+    className="
+      absolute right-0
+      px-2 py-1 text-xs
+      sm:px-3 sm:py-1.5 sm:text-sm
+      md:px-4 md:py-2 md:text-base
+      bg-cyan-600 text-white font-semibold rounded-md
+      hover:bg-indigo-600 transition
+    "
   >
     View Ideal Ranges
   </button>
+
 </div>
 
 
 
 
-      {history.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div className="flex-1 overflow-y-auto pr-5 custom-scroll ">
+  {history.length > 0 ? (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
             {[...history].reverse().map((entry, index) => (
             <motion.div
               key={index}
@@ -81,6 +93,7 @@ const Olahistory = () => {
       ) : (
         <p className="text-center text-gray-600">No history available.</p>
       )}
+      </div>
       {showIdealRanges && (
   <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
     <div className="bg-white p-6 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
