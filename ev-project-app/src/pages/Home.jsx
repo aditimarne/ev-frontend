@@ -50,9 +50,7 @@ const Home = () => {
       <p className="text-gray-400 text-sm">Visualize impact of Eco, Normal & Sport Modes on your battery performance.</p>
     </div>
   </div>
-    <button onClick={() => navigate("/login")}>
-  Go Login
-</button>
+  
 
   {/* Decorative Glow Effects */}
   <div className="absolute w-[700px] h-[700px] bg-cyan-400 opacity-10 rounded-full blur-3xl top-[10%] left-[-20%] z-0"></div>
