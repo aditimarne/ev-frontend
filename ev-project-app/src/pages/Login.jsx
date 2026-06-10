@@ -227,10 +227,10 @@ export default function Login() {
         <h2 className="text-xl font-bold mb-4">Login</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
-            name="username"
-            placeholder="Username"
-            onChange={handleChange}
-            className="p-2 border border-gray-600 rounded bg-transparent text-white placeholder-gray-400"
+              name="username"
+              placeholder="Username or Email"
+              onChange={handleChange}
+              className="p-2 border border-gray-600 rounded bg-transparent text-white placeholder-gray-400"
           />
           <input
             name="password"

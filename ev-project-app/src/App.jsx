@@ -34,11 +34,12 @@ const DynamicHistory = () => {
   return <Revolthistory />; // default
 };
 
-const token = localStorage.getItem("token");
 
 
 const AppRoutes = () => {
   const location = useLocation();
+  const token = localStorage.getItem("token");
+
   const hideNavbarRoutes = ["/register", "/login"];
 
   return (
